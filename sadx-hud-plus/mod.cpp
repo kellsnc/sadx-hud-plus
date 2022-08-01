@@ -8,7 +8,7 @@ void DrawScore(Float y)
 {
 	titleSprite.p.x = 7.5f;
 	titleSprite.p.y = y - 10.0f;
-	late_DrawSprite2D(&titleSprite, 0, 22046.498, NJD_SPRITE_ALPHA, LATE_LIG);
+	late_DrawSprite2D(&titleSprite, 0, 22046.498f, NJD_SPRITE_ALPHA, LATE_LIG);
 
 	auto score = ssStageNumber == STAGE_SANDBOARD ? slScore : slEnemyScore;
 
@@ -126,12 +126,12 @@ void DisplayScoreAction_r()
 		else
 		{
 			DrawScore(32.0f);
-			DrawTimer(50.0f);
+			DrawTimer(48.0f);
 
 			// No rings in Sand Hill
 			if (ssStageNumber != STAGE_SANDBOARD)
 			{
-				DrawRings(70.0f);
+				DrawRings(65.0f);
 			}
 		}
 
