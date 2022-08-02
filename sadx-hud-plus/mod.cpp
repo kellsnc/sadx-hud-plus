@@ -2,6 +2,8 @@
 #include "SADXModLoader.h"
 #include "sadx.h"
 
+using namespace uiscale;
+
 const HelperFunctions* gHelperFunctions;
 
 void DrawScore(Float y)
@@ -85,7 +87,7 @@ void DrawRings(Float y)
 
 void DrawLives()
 {
-	gHelperFunctions->PushScaleUI(uiscale::Align::Align_Bottom, false, 1.0f, 1.0f);
+	gHelperFunctions->PushScaleUI(Align::Align_Bottom, false, 1.0f, 1.0f);
 
 	njSetTexture(&CON_REGULAR_TEXLIST);
 
@@ -117,7 +119,7 @@ void DisplayScoreAction_r()
 	
 	if (score_u_display >= 0)
 	{
-		gHelperFunctions->PushScaleUI(uiscale::Align::Align_Default, false, 1.0f, 1.0f);
+		gHelperFunctions->PushScaleUI(Align::Align_Default, false, 1.0f, 1.0f);
 
 		if (GetLevelType() == STG_TYPE_ADVENTURE)
 		{
@@ -166,6 +168,23 @@ void __cdecl DisplayScore_r()
 	}
 }
 
+void DrawMinimalsPause()
+{
+	if (nbExtra > 0)
+	{
+		gHelperFunctions->PushScaleUI((Align)((int)Align::Align_Right | (int)Align::Align_Bottom), false, 1.0f, 1.0f);
+		for (int i = 0; i < nbExtra; ++i)
+		{
+			sprite_extra.sx = 0.8f;
+			sprite_extra.sy = sprite_extra.sx;
+			sprite_extra.p.y = (ScreenRaitoY * 480.0f) - 45.0f;
+			sprite_extra.p.x = -((i * 35.0f) - ((ScreenRaitoX * 595.0)));
+			njDrawSprite2D_ForcePriority(&sprite_extra, extra_list[i].num, -1.0f, 0);
+		}
+		gHelperFunctions->PopScaleUI();
+	}
+}
+
 extern "C"
 {
 	__declspec(dllexport) void __cdecl Init(const char* path, const HelperFunctions& helperFunctions)
@@ -181,6 +200,14 @@ extern "C"
 		anim_score[TEX_CON_HYOUJI].v2 = 68;
 		titleAnim.sy = 28;
 		aniRing.v1 = 71;
+	}
+
+	__declspec(dllexport) void __cdecl OnFrame()
+	{
+		if (GameState == 16)
+		{
+			DrawMinimalsPause();
+		}
 	}
 
 	__declspec(dllexport) ModInfo SADXModInfo = { ModLoaderVer };

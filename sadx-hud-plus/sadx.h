@@ -7,6 +7,13 @@ enum
 	STG_TYPE_MINIGAME
 };
 
+struct EXTRA
+{
+	Sint8 num;
+	Float scale;
+	Float alpha;
+};
+
 DataPointer(NJS_TEXLIST, texlist_score, 0x912DFC);
 DataArray(NJS_TEXANIM, anim_score, 0x912E08, 24);
 DataPointer(NJS_SPRITE, sprite_score, 0x913078);
@@ -20,6 +27,9 @@ DataPointer(Sint8, score_d_display, 0x3B0F150);
 DataPointer(Sint8, score_u_display, 0x3B0EF49);
 DataPointer(Sint32, slScore, 0x3B0F14C);
 DataPointer(Sint32, slEnemyScore, 0x3B0F104);
+DataPointer(Uint8, nbExtra, 0x3C4B034);
+DataArray(EXTRA, extra_list, 0x3C4AE08, 10);
+DataPointer(NJS_SPRITE, sprite_extra, 0x91B9DC);
 FunctionPointer(Bool, MirenScoreCheckDisplayScore, (), 0x4B5000);
 VoidFunc(MirenScoreDisplayScoreTitle, 0x4B4FC0);
 FunctionPointer(Bool, ChkPause, (), 0x414D70);
