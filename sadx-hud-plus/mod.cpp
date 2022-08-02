@@ -14,7 +14,7 @@ void DrawScore(Float y)
 
 	NJS_SPRITE _sp;
 	_sp.p.x = 190.0f;
-	_sp.p.y = y - 1.0f;
+	_sp.p.y = y - 1.5f;
 	_sp.tlist = &texlist_score;
 	_sp.tanim = &anim_score;
 	_sp.sx = 1.0f;
@@ -77,7 +77,7 @@ void DrawRings(Float y)
 	}
 
 	sprite_score.p.x = 42.0f;
-	sprite_score.p.y = y + 2.0f;
+	sprite_score.p.y = y + 2.5f;
 	SetMaterial(1.0f, 1.0f, color, color);
 	DisplaySNumbers(&sprite_score, rings, max(3, (int)log10(rings) + 1));
 	ResetMaterial();
@@ -121,7 +121,7 @@ void DisplayScoreAction_r()
 
 		if (GetLevelType() == STG_TYPE_ADVENTURE)
 		{
-			DrawRings(34.5f);
+			DrawRings(32.0f);
 		}
 		else
 		{
@@ -131,7 +131,7 @@ void DisplayScoreAction_r()
 			// No rings in Sand Hill
 			if (ssStageNumber != STAGE_SANDBOARD)
 			{
-				DrawRings(65.0f);
+				DrawRings(65.5f);
 			}
 		}
 
