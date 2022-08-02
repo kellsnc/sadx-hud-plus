@@ -53,7 +53,7 @@ void DrawTimer(Float y)
 void DrawRings(Float y)
 {
 	sprRing.p.x = 16.0f;
-	sprRing.p.y = y;
+	sprRing.p.y = y + 1.5f;
 	njDrawSprite2D_ForcePriority(&sprRing, 0, -1.501f, NJD_SPRITE_ALPHA);
 
 	auto rings = GetNumRing();
@@ -79,7 +79,7 @@ void DrawRings(Float y)
 	}
 
 	sprite_score.p.x = 42.0f;
-	sprite_score.p.y = y + 2.5f;
+	sprite_score.p.y = y + 4.0f;
 	SetMaterial(1.0f, 1.0f, color, color);
 	DisplaySNumbers(&sprite_score, rings, max(3, (int)log10(rings) + 1));
 	ResetMaterial();
@@ -110,6 +110,11 @@ void DrawLives()
 	gHelperFunctions->PopScaleUI();
 }
 
+bool IsBossLevel()
+{
+	return ssStageNumber >= STAGE_CHAOS0 && ssStageNumber <= STAGE_E101_R;
+}
+
 void DisplayScoreAction_r()
 {
 	ghDefaultBlendingMode();
@@ -125,6 +130,11 @@ void DisplayScoreAction_r()
 		{
 			DrawRings(32.0f);
 		}
+		else if (IsBossLevel())
+		{
+			DrawTimer(32.0f);
+			DrawRings(48.0f);
+		}
 		else
 		{
 			DrawScore(32.0f);
@@ -133,7 +143,7 @@ void DisplayScoreAction_r()
 			// No rings in Sand Hill
 			if (ssStageNumber != STAGE_SANDBOARD)
 			{
-				DrawRings(65.5f);
+				DrawRings(64.0f);
 			}
 		}
 
