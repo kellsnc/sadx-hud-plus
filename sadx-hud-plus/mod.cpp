@@ -168,21 +168,24 @@ void __cdecl DisplayScore_r()
 	}
 }
 
-void DrawMinimalsPause()
+void __cdecl ExtraDisplayPause(task* tp)
 {
-	if (nbExtra > 0)
+	// Making sure we're paused
+	if (ChkPause())
 	{
-		gHelperFunctions->PushScaleUI((Align)((int)Align::Align_Right | (int)Align::Align_Bottom), false, 1.0f, 1.0f);
-		for (int i = 0; i < nbExtra; ++i)
-		{
-			sprite_extra.sx = 0.8f;
-			sprite_extra.sy = sprite_extra.sx;
-			sprite_extra.p.y = (ScreenRaitoY * 480.0f) - 45.0f;
-			sprite_extra.p.x = -((i * 35.0f) - ((ScreenRaitoX * 595.0)));
-			njDrawSprite2D_ForcePriority(&sprite_extra, extra_list[i].num, -1.0f, 0);
-		}
-		gHelperFunctions->PopScaleUI();
+		auto twp = tp->twp;
+		if (twp->ang.x == 0)
+			twp->ang.x = 0x4000; // Instant spawn minimals unless it's already moving
+		twp->wtimer = 150ui16; // Trigger disappearance as soon as pause is disabled
+		twp->mode = 1i8; // Active mode
+		tp->exec(tp);
 	}
+}
+
+void __cdecl ExtraDisplayInit_r()
+{
+	auto tp = CreateElementalTask(2u, 2, ExtraDisplay);
+	tp->disp = ExtraDisplayPause; // Add a display to run in pause menu
 }
 
 extern "C"
@@ -191,23 +194,18 @@ extern "C"
 	{
 		gHelperFunctions = &helperFunctions;
 
-		helperFunctions.RegisterCommonObjectPVM({ "BOARD_SCORE", &BOARD_SCORE_TEXLIST });
+		helperFunctions.RegisterCommonObjectPVM({ "BOARD_SCORE", &BOARD_SCORE_TEXLIST }); // force score texture to always be loaded
 
 		WriteJump((void*)0x425F90, DisplayScore_r); // Hook DisplayScore, which draws the HUD
 		WriteData((uint8_t*)0x427F50, 0xC3ui8); // Remove DisplayTimer, which draws the timer/score digits
 		
+		WriteJump((void*)0x46B650, ExtraDisplayInit_r); // Add pause display to minimal task
+
+		// Sprite fixes:
 		anim_score[TEX_CON_HYOUJI].sy = 17;
 		anim_score[TEX_CON_HYOUJI].v2 = 68;
 		titleAnim.sy = 28;
 		aniRing.v1 = 71;
-	}
-
-	__declspec(dllexport) void __cdecl OnFrame()
-	{
-		if (GameState == 16)
-		{
-			DrawMinimalsPause();
-		}
 	}
 
 	__declspec(dllexport) ModInfo SADXModInfo = { ModLoaderVer };

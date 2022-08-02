@@ -30,6 +30,7 @@ DataPointer(Sint32, slEnemyScore, 0x3B0F104);
 DataPointer(Uint8, nbExtra, 0x3C4B034);
 DataArray(EXTRA, extra_list, 0x3C4AE08, 10);
 DataPointer(NJS_SPRITE, sprite_extra, 0x91B9DC);
+TaskFunc(ExtraDisplay, 0x46B5F0);
 FunctionPointer(Bool, MirenScoreCheckDisplayScore, (), 0x4B5000);
 VoidFunc(MirenScoreDisplayScoreTitle, 0x4B4FC0);
 FunctionPointer(Bool, ChkPause, (), 0x414D70);
