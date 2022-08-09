@@ -1,12 +1,16 @@
 #include "pch.h"
 #include "SADXModLoader.h"
+#include "IniFile.hpp"
 #include "sadx.h"
 
 using namespace uiscale;
 
-const HelperFunctions* gHelperFunctions;
+static const HelperFunctions* gHelperFunctions;
 
-void DrawScore(Float y)
+static bool boolShowScore = false;
+static bool boolRemoveLimits = false;
+
+void DrawScore(Float& y)
 {
 	titleSprite.p.x = 7.5f;
 	titleSprite.p.y = y - 10.0f;
@@ -39,18 +43,22 @@ void DrawScore(Float y)
 	}
 
 	ResetMaterial();
+
+	y += 16;
 }
 
-void DrawTimer(Float y)
+void DrawTimer(Float& y)
 {
 	sprite_score.p.x = 16.0f;
 	sprite_score.p.y = y;
 	njDrawSprite2D_ForcePriority(&sprite_score, TEX_CON_HYOUJI, -1.501f, NJD_SPRITE_ALPHA);
 
 	DrawTimeSprite(64.0f, y + 1.0f);
+
+	y += 16;
 }
 
-void DrawRings(Float y)
+void DrawRings(Float& y)
 {
 	sprRing.p.x = 16.0f;
 	sprRing.p.y = y + 1.5f;
@@ -81,8 +89,10 @@ void DrawRings(Float y)
 	sprite_score.p.x = 42.0f;
 	sprite_score.p.y = y + 4.0f;
 	SetMaterial(1.0f, 1.0f, color, color);
-	DisplaySNumbers(&sprite_score, rings, max(3, (int)log10(rings) + 1));
+	DisplaySNumbers(&sprite_score, rings, boolRemoveLimits ? max(3, (int)log10(rings) + 1) : 3);
 	ResetMaterial();
+
+	y += 16;
 }
 
 void DrawLives()
@@ -102,7 +112,7 @@ void DrawLives()
 	auto lives = (Sint16)GetNumPlayer();
 	if (score_display >= 0)
 	{
-		DisplaySNumbers(&sprite_score, lives, max(2, (int)log10(lives) + 1));
+		DisplaySNumbers(&sprite_score, lives, boolRemoveLimits ? max(2, (int)log10(lives) + 1) : 2);
 	}
 
 	ResetMaterial();
@@ -126,24 +136,30 @@ void DisplayScoreAction_r()
 	{
 		gHelperFunctions->PushScaleUI(Align::Align_Default, false, 1.0f, 1.0f);
 
+		Float y = 32;
+
 		if (GetLevelType() == STG_TYPE_ADVENTURE)
 		{
-			DrawRings(32.0f);
+			DrawRings(y);
 		}
 		else if (IsBossLevel())
 		{
-			DrawTimer(32.0f);
-			DrawRings(48.0f);
+			DrawTimer(y);
+			DrawRings(y);
 		}
 		else
 		{
-			DrawScore(32.0f);
-			DrawTimer(48.0f);
+			if (boolShowScore)
+			{
+				DrawScore(y);
+			}
+
+			DrawTimer(y);
 
 			// No rings in Sand Hill
 			if (ssStageNumber != STAGE_SANDBOARD)
 			{
-				DrawRings(64.0f);
+				DrawRings(y);
 			}
 		}
 
@@ -202,20 +218,33 @@ extern "C"
 {
 	__declspec(dllexport) void __cdecl Init(const char* path, const HelperFunctions& helperFunctions)
 	{
-		gHelperFunctions = &helperFunctions;
+		const IniFile* config = new IniFile(std::string(path) + "\\config.ini");
+		
+		boolShowScore = config->getBool("", "ShowScore", true);
+		boolRemoveLimits = config->getBool("", "RemoveLimits", true);
 
-		helperFunctions.RegisterCommonObjectPVM({ "BOARD_SCORE", &BOARD_SCORE_TEXLIST }); // force score texture to always be loaded
+		gHelperFunctions = &helperFunctions;
 
 		WriteJump((void*)0x425F90, DisplayScore_r); // Hook DisplayScore, which draws the HUD
 		WriteData((uint8_t*)0x427F50, 0xC3ui8); // Remove DisplayTimer, which draws the timer/score digits
-		
-		WriteJump((void*)0x46B650, ExtraDisplayInit_r); // Add pause display to minimal task
 
 		// Sprite fixes:
 		anim_score[TEX_CON_HYOUJI].sy = 17;
 		anim_score[TEX_CON_HYOUJI].v2 = 68;
 		titleAnim.sy = 28;
 		aniRing.v1 = 71;
+
+		if (boolShowScore)
+		{
+			helperFunctions.RegisterCommonObjectPVM({ "BOARD_SCORE", &BOARD_SCORE_TEXLIST }); // Force score texture to always be loaded
+		}
+
+		if (config->getBool("", "ShowAnimalsPause", true))
+		{
+			WriteJump((void*)0x46B650, ExtraDisplayInit_r); // Add pause display to minimal task
+		}
+		
+		delete config;
 	}
 
 	__declspec(dllexport) ModInfo SADXModInfo = { ModLoaderVer };

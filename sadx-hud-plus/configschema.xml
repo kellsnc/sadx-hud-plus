@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<ConfigSchema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.sonicretro.org">
+  <Groups>
+    <Group name="">
+      <Property name="ShowScore" type="bool" defaultvalue="True" display="Show score"/>
+      <Property name="RemoveLimits" type="bool" defaultvalue="True" display="Remove counter limits">
+        <HelpText>This will allow the ring counter to go up to 32767 and the life counter up to 127.</HelpText>
+      </Property>
+      <Property name="ShowAnimalsPause" type="bool" defaultvalue="True" display="Show collected animals in pause menu"/>
+    </Group>
+  </Groups>
+</ConfigSchema>

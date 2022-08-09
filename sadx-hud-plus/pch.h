@@ -6,5 +6,6 @@
 #include <SDKDDKVer.h>
 
 #include "SADXModLoader.h"
+#include "IniFile.hpp"
 
 #endif //PCH_H
