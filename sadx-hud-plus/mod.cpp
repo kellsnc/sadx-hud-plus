@@ -174,7 +174,7 @@ void DisplayScoreAction_r()
 
 void __cdecl DisplayScore_r()
 {
-	if (score_display < 0 || GetPlayerNumber() == Characters_Big)
+	if (score_display < 0 || GetPlayerNumber() == Characters_Big || ssStageNumber == STAGE_MG_CART)
 	{
 		return;
 	}
