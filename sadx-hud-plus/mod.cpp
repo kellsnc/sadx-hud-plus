@@ -7,8 +7,11 @@ using namespace uiscale;
 
 static const HelperFunctions* gHelperFunctions;
 
-static bool boolShowScore = false;
-static bool boolRemoveLimits = false;
+static bool bShowScore = true;
+static bool bShowMoreRings = false;
+static bool bShowMoreLives = false;
+static bool bShowCurrentLife = false;
+static bool bShowMinimalsPause = true;
 
 void DrawScore(Float& y)
 {
@@ -89,7 +92,7 @@ void DrawRings(Float& y)
 	sprite_score.p.x = 42.0f;
 	sprite_score.p.y = y + 4.0f;
 	SetMaterial(1.0f, 1.0f, color, color);
-	DisplaySNumbers(&sprite_score, rings, boolRemoveLimits ? max(3, (int)log10(rings) + 1) : 3);
+	DisplaySNumbers(&sprite_score, rings, bShowMoreRings ? max(3, (int)log10(rings) + 1) : 3);
 	ResetMaterial();
 
 	y += 16;
@@ -110,9 +113,14 @@ void DrawLives()
 	SetMaterial(1.0f, 1.0f, 1.0f, 1.0f);
 
 	auto lives = (Sint16)GetNumPlayer();
+	if (bShowCurrentLife)
+	{
+		lives += 1;
+	}
+
 	if (score_display >= 0)
 	{
-		DisplaySNumbers(&sprite_score, lives, boolRemoveLimits ? max(2, (int)log10(lives) + 1) : 2);
+		DisplaySNumbers(&sprite_score, lives, bShowMoreLives ? max(2, (int)log10(lives) + 1) : 2);
 	}
 
 	ResetMaterial();
@@ -149,7 +157,7 @@ void DisplayScoreAction_r()
 		}
 		else
 		{
-			if (boolShowScore)
+			if (bShowScore)
 			{
 				DrawScore(y);
 			}
@@ -219,27 +227,34 @@ extern "C"
 	__declspec(dllexport) void __cdecl Init(const char* path, const HelperFunctions& helperFunctions)
 	{
 		const IniFile* config = new IniFile(std::string(path) + "\\config.ini");
-		
-		boolShowScore = config->getBool("", "ShowScore", true);
-		boolRemoveLimits = config->getBool("", "RemoveLimits", true);
+		const IniGroup* config_grp = config->getGroup("");
 
+		if (config_grp)
+		{
+			bShowScore = config_grp->getBool("ShowScore", true);
+			bShowMoreRings = config_grp->getBool("ShowMoreRings", false);
+			bShowMoreLives = config_grp->getBool("ShowMoreLives", false);
+			bShowCurrentLife = config_grp->getBool("ShowCurrentLife", false);
+			bShowMinimalsPause = config_grp->getBool("ShowMinimalsPause", true);
+		}
+		
 		gHelperFunctions = &helperFunctions;
 
 		WriteJump((void*)0x425F90, DisplayScore_r); // Hook DisplayScore, which draws the HUD
 		WriteData((uint8_t*)0x427F50, 0xC3ui8); // Remove DisplayTimer, which draws the timer/score digits
 
-		// Sprite fixes:
+		// Sprite pos/UV fixes
 		anim_score[TEX_CON_HYOUJI].sy = 17;
 		anim_score[TEX_CON_HYOUJI].v2 = 68;
 		titleAnim.sy = 28;
 		aniRing.v1 = 71;
 
-		if (boolShowScore)
+		if (bShowScore)
 		{
 			helperFunctions.RegisterCommonObjectPVM({ "BOARD_SCORE", &BOARD_SCORE_TEXLIST }); // Force score texture to always be loaded
 		}
 
-		if (config->getBool("", "ShowAnimalsPause", true))
+		if (bShowMinimalsPause)
 		{
 			WriteJump((void*)0x46B650, ExtraDisplayInit_r); // Add pause display to minimal task
 		}

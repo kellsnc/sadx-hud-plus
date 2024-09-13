@@ -3,10 +3,16 @@
   <Groups>
     <Group name="">
       <Property name="ShowScore" type="bool" defaultvalue="True" display="Show score"/>
-      <Property name="RemoveLimits" type="bool" defaultvalue="True" display="Remove counter limits">
-        <HelpText>This will allow the ring counter to go up to 32767 and the life counter up to 127.</HelpText>
+      <Property name="ShowMoreRings" type="bool" defaultvalue="False" display="Show more rings">
+        <HelpText>The HUD will show more than 999 rings (up to the maximum amount of rings: 32767)</HelpText>
       </Property>
-      <Property name="ShowAnimalsPause" type="bool" defaultvalue="True" display="Show collected animals in pause menu"/>
+      <Property name="ShowMoreLives" type="bool" defaultvalue="False" display="Show more lives">
+        <HelpText>The HUD will show more than 999 lives (up to the maximum amount of lives: 127)</HelpText>
+      </Property>
+      <Property name="ShowCurrentLife" type="bool" defaultvalue="False" display="Show current life">
+        <HelpText>Show the active life instead of remaining lives like other Sonic games.</HelpText>
+      </Property>
+      <Property name="ShowMinimalsPause" type="bool" defaultvalue="True" display="Show minimals in pause menu"/>
     </Group>
   </Groups>
 </ConfigSchema>
