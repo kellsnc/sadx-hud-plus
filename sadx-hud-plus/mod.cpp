@@ -34,11 +34,11 @@ void DrawScore(Float& y)
 		if (score <= 0)
 		{
 			SetMaterial(0.8f, 0.8f, 0.8f, 0.8f);
-			njDrawSprite2D_ForcePriority(&_sp, 0, 0, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+			njDrawSprite2D_ForcePriority(&_sp, 0, -1.501f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 		}
 		else
 		{
-			njDrawSprite2D_ForcePriority(&_sp, score % 10, -1.5f, NJD_SPRITE_ALPHA);
+			njDrawSprite2D_ForcePriority(&_sp, score % 10, -1.501f, NJD_SPRITE_ALPHA);
 			score /= 10;
 		}
 
