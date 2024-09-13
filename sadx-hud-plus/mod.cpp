@@ -218,8 +218,12 @@ void __cdecl ExtraDisplayPause(task* tp)
 
 void __cdecl ExtraDisplayInit_r()
 {
-	auto tp = CreateElementalTask(2u, 2, ExtraDisplay);
-	tp->disp = ExtraDisplayPause; // Add a display to run in pause menu
+	// Do not load in Sky Chase as the game does not load the PVM in these levels
+	if (ssStageNumber != STAGE_SHOOTING && ssStageNumber != STAGE_SHOOTING2)
+	{
+		auto tp = CreateElementalTask(0x2, LEV_2, ExtraDisplay);
+		tp->disp = ExtraDisplayPause; // Add a display to run in pause menu
+	}
 }
 
 extern "C"
