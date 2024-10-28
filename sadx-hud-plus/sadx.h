@@ -14,7 +14,6 @@ struct EXTRA
 	Float alpha;
 };
 
-DataPointer(NJS_TEXLIST, texlist_score, 0x912DFC);
 DataArray(NJS_TEXANIM, anim_score, 0x912E08, 24);
 DataPointer(NJS_SPRITE, sprite_score, 0x913078);
 DataPointer(NJS_TEXANIM, aniRing, 0x913118);
@@ -33,7 +32,6 @@ DataPointer(NJS_SPRITE, sprite_extra, 0x91B9DC);
 TaskFunc(ExtraDisplay, 0x46B5F0);
 FunctionPointer(Bool, MirenScoreCheckDisplayScore, (), 0x4B5000);
 VoidFunc(MirenScoreDisplayScoreTitle, 0x4B4FC0);
-FunctionPointer(Bool, ChkPause, (), 0x414D70);
 FunctionPointer(void, DrawTimeSprite, (Float x, Float y), 0x4261C0);
 
 static const void* const loc_425960 = (void*)0x425960;
